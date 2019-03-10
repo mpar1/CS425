@@ -1,7 +1,7 @@
-# CS425_Project
+## CS425_Project
 Group E project repository 
 
-#To-do List#:
+# To-do List:
 1. Git all the github usernames
 2. Create schema based off of word doc
    b. Run database on each person's computer
@@ -9,6 +9,6 @@ Group E project repository
 3. Generate diagram of schema - done automatically in dbeaver
 4. Printscreen of diagram
 
-Points for discussion:
+# Points for discussion:
 1. User interface - website or java app
 2. When to meet up

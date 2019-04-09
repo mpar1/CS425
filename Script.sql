@@ -49,7 +49,7 @@ create table ord (
 	staffID varchar(16),
 	diagnosticID varchar(16),
 	results text,
-	primary key (orderID)
+	primary key (orderID),
 	foreign key (diagnosticID) references diagnostic(ID) 
 
 );

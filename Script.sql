@@ -50,6 +50,7 @@ create table ord (
 	diagnosticID varchar(16),
 	results text,
 	primary key (orderID),
-	foreign key (diagnosticID) references diagnostic(ID) 
+	foreign key (diagnosticID) references diagnostic(ID),
+	foreign key (staffID) references employee(staffID)
 
 );

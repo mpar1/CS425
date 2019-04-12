@@ -1,6 +1,9 @@
+/* Indexes for easy lookup on a login's timestamps, full names for patient and staff. */
 create index timestamps on login(LoginTime,LogoutTime);
 create index fullname on patient(fname,lname);
 create index staff_fullname on employee(fname,lname);
+
+/* Tables for entities */
 
 create table login (
 	userID varchar(16),
@@ -57,11 +60,13 @@ create table appointments (
 
 );
 
+/* Roles for permissions */
 create role admin;
 create role scheduler;
 create role medicalStaff;
 create role patient;
 
+/* Grants permissions to roles */
 grant select on orders to public;
 grant select, insert on appointments to scheduler, medicalStaff;
 grant insert on orders to medicalStaff;

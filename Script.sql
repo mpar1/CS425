@@ -19,14 +19,7 @@ create table diagnostic (
 	check (category in ('Lab', 'MRI', 'Xray', 'Office Visit'))
 );
 
-create table patient (
-	fname varchar(16),
-	lname varchar(16),
-	address varchar(16),
-	patientID varchar(16)
-);
-
-create table Orders (
+create table orders (
 	orderID varchar(16),
 	customerID varchar(16),
 	staffID varchar(16),
@@ -35,6 +28,14 @@ create table Orders (
 	primary key (orderID),
 	foreign key (diagnosticID) references diagnostic(ID),
 	foreign key (staffID) references employee(staffID)
+);
+
+create table patient (
+	fname varchar(16),
+	lname varchar(16),
+	address varchar(16),
+	patientID varchar(16),
+	primary key (patientID),
 );
 
 create table employee (
@@ -46,13 +47,24 @@ create table employee (
 	check (jobtype in ('Medical Staff', 'Admin', 'Scheduler'))
 );
 
+create table appointments (
+	appointDate date,
+	patient varchar(16),
+	meeting varchar(16),
+	primary key (appointDate, patient, meeting),
+	foreign key (patient) references patient(patientID),
+	foreign key (meeting) references employee(staffID),
+
+);
+
 create role admin;
 create role scheduler;
 create role medicalStaff;
 create role patient;
 
-grant select on Orders to public;
-grant insert on Orders to medicalStaff;
+grant select on orders to public;
+grant select, insert on appointments to scheduler, medicalStaff;
+grant insert on orders to medicalStaff;
 grant select, update on patient to medicalStaff;
 grant insert on patient to admin;
 grant insert on login to admin;

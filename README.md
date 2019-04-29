@@ -10,5 +10,5 @@ Group E project repository
 4. Printscreen of diagram
 
 # Points for discussion:
-1. User interface - website or java app
-2. When to meet up
+1. Java app
+2. 

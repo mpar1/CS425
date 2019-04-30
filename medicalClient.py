@@ -15,13 +15,13 @@ cursor = conn.cursor()
 
 
 
-def schedule_appoint(action):
+def schedule_appoint():
     pass
 	
-def access_records(var):
+def access_records():
     print("hello")
 
-def access_calendar(action): #view appointments for a specific doctor
+def access_calendar(): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                  + "from employee\n"
                  + "where jobtype=\"Medical Staff\";")
@@ -71,7 +71,7 @@ def quit_program():
 	conn.close()
 	sys.exit(0)
 
-def wrong_option(action):
+def wrong_option():
     print("Invalid option")
 	
 	

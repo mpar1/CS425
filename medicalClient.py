@@ -57,7 +57,33 @@ def access_records(var):
 
 
 def doc_calandar(action): #view appointments for a specific doctor
-    pass
+    cursor.execute("select fname, lname, staffID\n"
+                 + "from employee\n"
+                 + "where jobtype=\"Medical Staff\";")
+    doc_lst = cursor.fetchall()
+    
+    print("The doctors are:")
+    for num, doc in enumerate(doc_lst):
+        print(f"{num+1}: {doc[0]} {doc[1]}")
+    
+    while True:
+        try:
+            doc_idx = int(input("Select which doctor you would like to see calandar for\n \
+                                (Please enter the number corresponding with the doctor):"))-1
+            break
+        except:
+            print("Please enter a valid number")
+
+    doc = doc_lst[doc_idx]
+    doc_id = doc[2]
+    cursor.execute("select date, patient\n"
+                   "from appointments\n"
+                  f"where meeting=\"{doc_id}\"")
+    schedule = cursor.fetchall()
+
+    print("The apointments for {0} are:", doc[1])
+    for appoint in schedule:
+        print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
 
 
 def view_reports(action):

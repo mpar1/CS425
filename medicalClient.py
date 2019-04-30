@@ -42,7 +42,8 @@ def doc_calandar(action):
     
     while True:
         try:
-            doc_idx = int(input("Select which doctor you would like to see calandar for\n(Please enter the number corresponding with the doctor):"))-1
+            doc_idx = int(input("Select which doctor you would like to see calandar for\n \
+                                (Please enter the number corresponding with the doctor):"))-1
             break
         except:
             print("Please enter a valid number")

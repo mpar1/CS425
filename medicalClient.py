@@ -60,11 +60,11 @@ def schedule_appoint(action):
 def access_records(var):
     pass
 
-def access_calandar(action):
-    pass
+def access_calendar(action):
+	
 
 def access_reports(action):
-    pass
+    
 
 def create_patient():
 	pass
@@ -117,7 +117,6 @@ def try_login(u,p):
 		print("Username: ")
 		u = input()
 					
-		
 
 
 def menu(priv):

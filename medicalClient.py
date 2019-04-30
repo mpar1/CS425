@@ -62,7 +62,7 @@ def create_account():
 	print("New Password: ")
 	pw = input()
 	print("Privilege (patient, medicalStaff, scheduler, admin): ")
-	while (true):
+	while True:
 		priv = input()
 		if priv == "patient":
 			cursor.execute("SELECT * FROM patient")
@@ -90,7 +90,7 @@ def create_account():
 		loginDet.append(None)
 	else:
 		loginDet.append(None)
-		loginDet.appent(str(id))
+		loginDet.append(str(id))
 	loginDet.append(priv)
 	
 	command = "INSERT INTO login VALUES (" + row[0] + ", " + row[1] + ", " + row[2] + ", " + row[3] + ", " + row[4] + ")"
@@ -226,10 +226,6 @@ def main():
 	while action != "5":
 		action = input(menu(priv))
 		do_action(priv, action)
-
-	while True:
-		action = input(prompt)
-		do_action(action, priv)
         
         
 

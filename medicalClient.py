@@ -55,6 +55,7 @@ def schedule_appoint(action):
 def access_records(var):
     print("hello")
 
+
 def doc_calandar(action): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                  + "from employee\n"

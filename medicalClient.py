@@ -18,8 +18,8 @@ cursor = conn.cursor()
 def schedule_appoint():
     pass
 	
-def access_records():
-    print("hello")
+def access_records(var):
+	pass
 
 def access_calendar(action): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
@@ -51,8 +51,29 @@ def access_calendar(action): #view appointments for a specific doctor
         print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
 
 def access_reports():
-    pass
-
+	cursor.execute("SELECT * FROM orders JOIN diagnostic ON orders.diagnosticID=diagnostic.ID")
+	orders = cursor.fetchall() #[orderID,customerID,staffID,diagnosticID,results,price,category]
+	costsum = 0
+	labs = 0
+	mris = 0
+	xrays = 0
+	visits = 0
+	for row in orders:
+		costsum += row[5]
+		if row[6] == "Lab":
+			labs += 1
+		elif row[6] == "MRI":
+			mris += 1
+		elif row[6] == "Xray":
+			xrays += 1
+		elif row[6] == "Office Visit":
+			visits += 1
+	
+	print("\n=====================\n")
+	print("Overall order summary: \n")
+	print(f"Total number of orders: {str(len(orders))} \n")
+	print(f"Total cost of all orders: {str(costsum)}")
+	
 def create_patient():
 	pass
 
@@ -93,7 +114,7 @@ def create_account():
 		loginDet.append(str(id))
 	loginDet.append(priv)
 	
-	command = "INSERT INTO login VALUES (" + row[0] + ", " + row[1] + ", " + row[2] + ", " + row[3] + ", " + row[4] + ")"
+	command = f"INSERT INTO login VALUES ({row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]})"
 	
 	print("Login created!")
 	
@@ -173,7 +194,9 @@ def menu(priv):
         "patient" : patientPrompt,
         "scheduler" : schedulerPrompt,
     }
+
 	return start_line + action_switch.get(priv, "Invalid Option") + endcl
+
 
 def do_action(priv, action):
 
@@ -222,10 +245,12 @@ def main():
 	priv = login_details[4]
 
 	print("Welcome, " + u + "! Please select any of the following: ")
+
 	action = ""
 	while action != "5":
 		action = input(menu(priv))
 		do_action(priv, action)
+
         
         
 

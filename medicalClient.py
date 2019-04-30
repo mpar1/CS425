@@ -52,14 +52,8 @@ def schedule_appoint(action):
     pass
 	
 def access_records(var):
-    print("hello")
-
-<<<<<<< HEAD
-def access_calendar(action):
 	pass
 
-def access_reports(action):
-=======
 def access_calendar(action): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                  + "from employee\n"
@@ -90,9 +84,30 @@ def access_calendar(action): #view appointments for a specific doctor
         print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
 
 def access_reports():
->>>>>>> 504ffa87e95d7df22522e5e065a2a05576a03081
-    pass
-
+	cursor.execute("SELECT * FROM orders JOIN diagnostic ON orders.diagnosticID=diagnostic.ID")
+	orders = cursor.fetchall() #[orderID,customerID,staffID,diagnosticID,results,price,category]
+	costsum = 0
+	labs = 0
+	mris = 0
+	xrays = 0
+	visits = 0
+	for row in orders:
+		costsum += row[5]
+		if row[6] == "Lab":
+			labs += 1
+		elif row[6] == "MRI":
+			mris += 1
+		elif row[6] == "Xray":
+			xrays += 1
+		elif row[6] == "Office Visit":
+			visits += 1
+	
+	print("\n=====================\n")
+	print("Overall order summary: \n")
+	print(f"Total number of orders: {str(len(orders))} \n")
+	print(f"Total cost of all orders: {str(costsum)}")
+	
+	
 def create_patient():
 	pass
 
@@ -133,7 +148,7 @@ def create_account():
 		loginDet.appent(str(id))
 	loginDet.append(priv)
 	
-	command = "INSERT INTO login VALUES (" + row[0] + ", " + row[1] + ", " + row[2] + ", " + row[3] + ", " + row[4] + ")"
+	command = f"INSERT INTO login VALUES ({row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]})"
 	
 	print("Login created!")
 	
@@ -216,12 +231,8 @@ def menu(priv):
         "scheduler" : schedulerPrompt,
     }
 	
-<<<<<<< HEAD
 	print(action_switch.get(priv, "Invalid Option"))
 	
-=======
-	print(action_switch.get(user_in, "Invalid Option"))
->>>>>>> 504ffa87e95d7df22522e5e065a2a05576a03081
 	print(endcl)
 
 
@@ -250,12 +261,8 @@ def main():
 	print("Welcome, " + u + "! Please select any of the following: ")
 	
 	menu(priv)
-<<<<<<< HEAD
 
 	while True:
-=======
-	while action != "5":
->>>>>>> 504ffa87e95d7df22522e5e065a2a05576a03081
 		action = input(prompt)
 		do_action(action, priv)
         

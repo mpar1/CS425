@@ -61,16 +61,54 @@ def access_records(var):
     pass
 
 def access_calendar(action):
-	
+	pass
 
 def access_reports(action):
-    
+    pass
 
 def create_patient():
 	pass
 
 def create_account():
-	pass
+	print("New Username: ")
+	user = input()
+	print("New Password: ")
+	pw = input()
+	print("Privilege (patient, medicalStaff, scheduler, admin): ")
+	while (true):
+		priv = input()
+		if priv == "patient":
+			cursor.execute("SELECT * FROM patient")
+			patients = cursor.fetchall()
+			print("\n===============================\n")
+			for row in patients:
+				print("ID: " + row[3] + " | Name: " + row[0] + " " + row[1] + " | Address: " + row[2] + "\n")
+			print("\n===============================\n")
+			break
+		elif priv == "medicalStaff" or priv == "scheduler" or priv == "admin":
+			cursor.execute("SELECT * FROM employee")
+			employees = cursor.fetchall()
+			print("\n===============================\n")
+			for row in employees:
+				print("ID: " + row[2] + " | Name: " + row[0] + " " + row[1] + " | Job Type: " + row[3] + "\n")
+			print("\n===============================\n")
+			break
+		else: 
+			print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
+	print("Please input the ID of the person you wish to connect this account to: ")
+	id = input()
+	loginDet = [user, pw]
+	if priv == "patient":
+		loginDet.append(str(id))
+		loginDet.append(None)
+	else:
+		loginDet.append(None)
+		loginDet.appent(str(id))
+	loginDet.append(priv)
+	
+	command = "INSERT INTO login VALUES (" + row[0] + ", " + row[1] + ", " + row[2] + ", " + row[3] + ", " + row[4] + ")"
+	
+	print("Login created!")
 	
 def view_orders():
 	pass
@@ -151,7 +189,7 @@ def menu(priv):
         "scheduler" : schedulerPrompt,
     }
 	
-	print(action_switch.get(user_in, "Invalid Option"))
+	print(action_switch.get(priv, "Invalid Option"))
 	
 	print(endcl)
 
@@ -176,13 +214,13 @@ def main():
 	
 	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
 	loginDetails = try_login(u,p)
-	priv = login_details[4]
+	priv = loginDetails[4]
 
 	print("Welcome, " + u + "! Please select any of the following: ")
 	
 	menu(priv)
 
-	while action != "5":
+	while True:
 		action = input(prompt)
 		do_action(action, priv)
         

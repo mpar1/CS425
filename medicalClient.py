@@ -13,42 +13,9 @@ conn = db.connect(database=url.path[1:],
 
 cursor = conn.cursor()
 
-def do_action(action,priv):
-
-	admin = {
-		"1" : schedule_appoint,
-		"2" : create_patient,
-		"3" : create_account,
-		"4" : access_reports,
-		"5" : quit_program
-	}
-	med_staff = {
-		"1" : access_records,
-		"2" : create_order,
-		"3" : access_calendar,
-		"4" : quit_program
-	}
-	patient = {
-		"1" : view_orders,
-		"2" : quit_program
-	}
-	scheduler = {
-		"1" : view_orders,
-		"2" : access_calendar,
-		"3" : quit_program
-	}
-
-	action_switch = {
-		"admin" : admin,
-		"medical staff" : med_staff,
-		"patient" : patient,
-		"scheduler" : scheduler
-	}
-		
-	action_switch.get(action, wrong_option)
 
 
-def schedule_appoint(action):
+def schedule_appoint():
     pass
 	
 def access_records(var):
@@ -107,7 +74,6 @@ def access_reports():
 	print(f"Total number of orders: {str(len(orders))} \n")
 	print(f"Total cost of all orders: {str(costsum)}")
 	
-	
 def create_patient():
 	pass
 
@@ -117,7 +83,7 @@ def create_account():
 	print("New Password: ")
 	pw = input()
 	print("Privilege (patient, medicalStaff, scheduler, admin): ")
-	while (true):
+	while True:
 		priv = input()
 		if priv == "patient":
 			cursor.execute("SELECT * FROM patient")
@@ -145,7 +111,7 @@ def create_account():
 		loginDet.append(None)
 	else:
 		loginDet.append(None)
-		loginDet.appent(str(id))
+		loginDet.append(str(id))
 	loginDet.append(priv)
 	
 	command = f"INSERT INTO login VALUES ({row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]})"
@@ -153,8 +119,9 @@ def create_account():
 	print("Login created!")
 	
 def view_orders():
-	currsor.execute("select * from orders")
-	orders = currsor.fetchall()
+	cursor.execute("select * from orders")
+	orders = cursor.fetchall()
+	print("Here is the log of all orders:")
 	for order in orders:
 		print(order)
 
@@ -163,8 +130,9 @@ def quit_program():
 	conn.close()
 	sys.exit(0)
 
-def wrong_option(action):
+def wrong_option():
     print("Invalid option")
+	
 	
 # Pulls whole login table from database and attempts a login.
 # If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
@@ -172,7 +140,6 @@ def wrong_option(action):
 def try_login(u,p):
 
 	cursor.execute("SELECT * FROM login")
-	
 	logins = cursor.fetchall()
 	logindetails = []
 	
@@ -198,11 +165,8 @@ def try_login(u,p):
 		u = input()
 					
 
-
 def menu(priv):
-
-	print("\n===============================\n")
-
+	start_line = ("\n===============================\n")
 	adminPrompt =  "1. Schedule an appointment\n" \
             + "2. Create new patient\n" \
             + "3. Create new user account\n" \
@@ -230,24 +194,46 @@ def menu(priv):
         "patient" : patientPrompt,
         "scheduler" : schedulerPrompt,
     }
-	
-	print(action_switch.get(priv, "Invalid Option"))
-	
-	print(endcl)
 
+	return start_line + action_switch.get(priv, "Invalid Option") + endcl
+
+
+def do_action(priv, action):
+
+	admin = {
+		"1" : schedule_appoint,
+		"2" : create_patient,
+		"3" : create_account,
+		"4" : access_reports,
+		"5" : quit_program
+	}
+	med_staff = {
+		"1" : access_records,
+		"2" : create_order,
+		"3" : access_calendar,
+		"4" : quit_program
+	}
+	patient = {
+		"1" : view_orders,
+		"2" : quit_program
+	}
+	scheduler = {
+		"1" : view_orders,
+		"2" : access_calendar,
+		"3" : quit_program
+	}
+
+	action_switch = {
+		"admin" : admin,
+		"medical staff" : med_staff,
+		"patient" : patient,
+		"scheduler" : scheduler
+	}
+		
+	action_switch.get(priv).get(action, wrong_option)
 
 def main():
 	print("Welcome to the medical clinic, please log in:")
-	'''
-	prompt =  "\n===============================\n" \
-            + "1. Schedule an appointment\n" \
-            + "2. View medical record\n" \
-            + "3. View Doctor calendar\n" \
-            + "4. View reports\n" \
-            + "5. Quit\n" \
-            + "===============================\n" \
-            + "Enter in the number for the action:"
-	'''
 
 	print("Username: ")
 	u = input()
@@ -255,16 +241,16 @@ def main():
 	p = input()
 	
 	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-	loginDetails = try_login(u,p)
-	priv = loginDetails[4]
+	login_details = try_login(u,p)
+	priv = login_details[4]
 
 	print("Welcome, " + u + "! Please select any of the following: ")
-	
-	menu(priv)
 
-	while True:
-		action = input(prompt)
-		do_action(action, priv)
+	action = ""
+	while action != "5":
+		action = input(menu(priv))
+		do_action(priv, action)
+
         
         
 

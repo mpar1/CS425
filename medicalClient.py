@@ -58,6 +58,7 @@ def access_reports():
 	mris = 0
 	xrays = 0
 	visits = 0
+	visitrev = 0
 	for row in orders:
 		costsum += row[5]
 		if row[6] == "Lab":
@@ -68,11 +69,20 @@ def access_reports():
 			xrays += 1
 		elif row[6] == "Office Visit":
 			visits += 1
+			visitrev += row[5]
 	
 	print("\n=====================\n")
 	print("Overall order summary: \n")
 	print(f"Total number of orders: {str(len(orders))} \n")
-	print(f"Total cost of all orders: {str(costsum)}")
+	print(f"Total revenue from all diagnostics: {str(costsum)} \n")
+	print(f"Total revenue from all doctor visits: {str(visitrev)} \n")
+	print(f"Total MRIs: {str(mris)} \n")
+	print(f"Total XRays: {str(xrays)} \n")
+	print(f"Total Labs: {str(labs)} \n")
+	print(f"Total Office Visits: {str(visits)} \n")
+	print("\n====End of Report====\n")
+
+	
 	
 def create_patient():
 	pass

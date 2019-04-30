@@ -15,7 +15,6 @@ cursor = conn.cursor()
 def do_action(action,priv):
 
 	if priv == "admin":
-	
 		action_switch = {
 			"1" : schedule_appoint,
 			"2" : create_patient,
@@ -25,7 +24,6 @@ def do_action(action,priv):
 		}
 		
 	elif priv == "medicalStaff":
-	
 		action_switch = {
 			"1" : access_records,
 			"2" : create_order,
@@ -34,23 +32,21 @@ def do_action(action,priv):
 		}
 	
 	elif priv == "patient":
-	
 		action_switch = {
 			"1" : view_orders,
-			"2" : view_bills
+			"2" : view_bills,
 			"3" : quit_program
 		}
 		
 	elif priv == "scheduler":
-	
 		action_switch = {
 			"1" : view_orders,
-			"2" : view_bills
+			"2" : view_bills,
 			"3" : access_calendar,
 			"4" : quit_program
 		}
 		
-    action_switch.get(action, wrong_option)
+	action_switch.get(action, wrong_option)
 
 
 def schedule_appoint(action):
@@ -65,16 +61,16 @@ def access_calandar(action):
 def access_reports(action):
     pass
 
-def create_patient()
+def create_patient():
 	pass
 
-def create_account()
+def create_account():
 	pass
 	
-def view_orders()
+def view_orders():
 	pass
 
-def view_bills()
+def view_bills():
 	pass
 
 def quit_program(action):
@@ -84,9 +80,9 @@ def quit_program(action):
 def wrong_option(action):
     print("Invalid option")
 	
-''' Pulls whole login table from database and attempts a login.
-	If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-'''
+# Pulls whole login table from database and attempts a login.
+#	If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
+
 def try_login(u,p):
 
 	cursor.execute("SELECT * from 'login'")
@@ -95,7 +91,7 @@ def try_login(u,p):
 	logindetails = []
 	
 	while True:
-		if u == "q"
+		if u == "q":
 			quit_program()
 		for row in logins:
 			if row[0] == u:
@@ -105,7 +101,7 @@ def try_login(u,p):
 							logindetails.append(x)
 						print("Login Successful!")
 						return logindetails
-					elif p == "q": '''Doesn't work if password is q'''
+					elif p == "q": #Doesn't work if password is q
 						quit_program()
 					else:
 						print("Wrong password. Please try again, or input q to close. \n")
@@ -116,7 +112,6 @@ def try_login(u,p):
 		u = input(prompt)
 					
 		
-
 
 def menu(priv):
 
@@ -139,7 +134,7 @@ def menu(priv):
             + "3. Create new user account\n" \
             + "4. View reports\n" 
 	
-    endcl = "5. Quit\n" \
+	endcl = "5. Quit\n" \
             + "===============================\n" \
             + "Enter in the number for the action:"
 			
@@ -147,25 +142,16 @@ def menu(priv):
         "admin" : adminPrompt,
         "medicalStaff" : staffPrompt,
         "patient" : patientPrompt,
-        "scheduler" : schedulerPrompt,
+        "scheduler" : schedulerPrompt
     }
 	
-    print(action_switch.get(user_in, "Invalid Option"))
+	print(action_switch.get(user_in, "Invalid Option"))
 	
 	print(endcl)
 
 
 def main():
     print("Welcome to the medical clinic, please log in:")
-    '''prompt =  "\n===============================\n" \
-            + "1. Schedule an appointment\n" \
-            + "2. View medical record\n" \
-            + "3. View Doctor calendar\n" \
-            + "4. View reports\n" \
-            + "5. Quit\n" \
-            + "===============================\n" \
-            + "Enter in the number for the action:"
-	'''
 	print("Username: ")
 	u = input(prompt)
 	print("Password: ")
@@ -178,7 +164,6 @@ def main():
 	print("Welcome, " + u + "! Please select any of the following: ")
 	
 	menu(priv)
-
     while action != "5":
         action = input(prompt)
         do_action(action, priv)

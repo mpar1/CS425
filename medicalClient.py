@@ -164,9 +164,9 @@ def main():
 	print("Welcome, " + u + "! Please select any of the following: ")
 	
 	menu(priv)
-    while action != "5":
-        action = input(prompt)
-        do_action(action, priv)
+	while action != "5":
+		action = input(prompt)
+		do_action(action, priv)
         
         
 

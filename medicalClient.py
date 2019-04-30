@@ -152,7 +152,7 @@ def menu(priv):
             + "4. View reports\n" 
 	
 	staffPrompt =  "1. View and update patient record\n" \
-            + "2. Create a order\n" \
+            + "2. Create an order\n" \
             + "3. View calendar and schedule appointment\n"
 	
 	patientPrompt =  "1. View orders\n" \

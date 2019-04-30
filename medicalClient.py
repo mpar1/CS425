@@ -20,7 +20,7 @@ def do_action(action,priv):
 			"1" : schedule_appoint,
 			"2" : create_patient,
 			"3" : create_account,
-			"4" : access_reporting,
+			"4" : access_reports,
 			"5" : quit_program
 		}
 		
@@ -56,15 +56,26 @@ def do_action(action,priv):
 def schedule_appoint(action):
     pass
 	
-
-def view_records(var):
+def access_records(var):
     print("hello")
 
-def doc_calandar(action):
+def access_calandar(action):
     pass
 
-def view_reports(action):
+def access_reports(action):
     pass
+
+def create_patient()
+	pass
+
+def create_account()
+	pass
+	
+def view_orders()
+	pass
+
+def view_bills()
+	pass
 
 def quit_program(action):
     print("Quiting program")
@@ -160,7 +171,7 @@ def main():
 	print("Password: ")
 	p = input(prompt)
 	
-	'''[userID, password, priv, LoginTime, LogoutTime]'''
+	'''[userID, password, patient, employee, privilege, LoginTime, LogoutTime]'''
 	loginDetails = try_login(u,p)
 	priv = login_details[4]
 

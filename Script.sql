@@ -10,8 +10,11 @@ create table login (
 	privilege varchar(12),
 	LoginTime time,
 	LogoutTime time,
-	primary key (userID),
-	check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient'))
+	primary key (userID),check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient'))
+	foreign key patient references patient(patientID),
+	foreign key employee references employee(staffID)
+	check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient')),
+	check (patient=null or employee=null)
 );
 
 create table diagnostic (
@@ -30,6 +33,7 @@ create table orders (
 	results text,
 	primary key (orderID),
 	foreign key (diagnosticID) references diagnostic(ID),
+	foreign key (customerID) references patient(patientID)
 	foreign key (staffID) references employee(staffID)
 );
 

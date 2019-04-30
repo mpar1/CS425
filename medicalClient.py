@@ -19,7 +19,15 @@ def schedule_appoint():
     pass
 	
 def access_records(var):
-	pass
+	cursor.execute("select customerID, category"
+				   "from orders join diagnostic"
+				   "on orders.diagnosticID=diagnostic.ID"
+				   "group by customerID")
+	records = cursor.fetchall()
+	print("Here are all the patient records")
+	for record in records:
+		print(f"Patient: {record[0]}\nList of all treatments: {record[1]}\n")
+
 
 def access_calendar(action): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
@@ -75,6 +83,9 @@ def access_reports():
 	print(f"Total cost of all orders: {str(costsum)}")
 	
 def create_patient():
+	pass
+
+def create_order():
 	pass
 
 def create_account():

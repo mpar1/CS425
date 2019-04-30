@@ -1,6 +1,7 @@
 import psycopg2 as db
 import urllib.parse as up
 import os
+import sys
 
 up.uses_netloc.append("postgres")
 url = up.urlparse("postgres://fcbeygin:nPzIeoASpjJTLArcn4BCdZB_SzchCX78@isilo.db.elephantsql.com:5432/fcbeygin")
@@ -15,6 +16,7 @@ cursor = conn.cursor()
 def do_action(action,priv):
 
 	if priv == "admin":
+	
 		action_switch = {
 			"1" : schedule_appoint,
 			"2" : create_patient,
@@ -24,6 +26,7 @@ def do_action(action,priv):
 		}
 		
 	elif priv == "medicalStaff":
+	
 		action_switch = {
 			"1" : access_records,
 			"2" : create_order,
@@ -32,6 +35,7 @@ def do_action(action,priv):
 		}
 	
 	elif priv == "patient":
+	
 		action_switch = {
 			"1" : view_orders,
 			"2" : view_bills,
@@ -39,6 +43,7 @@ def do_action(action,priv):
 		}
 		
 	elif priv == "scheduler":
+	
 		action_switch = {
 			"1" : view_orders,
 			"2" : view_bills,
@@ -46,7 +51,7 @@ def do_action(action,priv):
 			"4" : quit_program
 		}
 		
-	action_switch.get(action, wrong_option)
+		action_switch.get(action, wrong_option)
 
 
 def schedule_appoint(action):
@@ -89,6 +94,35 @@ def doc_calandar(action): #view appointments for a specific doctor
 def view_reports(action):
     pass
 
+def access_calendar(action): #view appointments for a specific doctor
+    cursor.execute("select fname, lname, staffID\n"
+                 + "from employee\n"
+                 + "where jobtype=\"Medical Staff\";")
+    doc_lst = cursor.fetchall()
+    
+    print("The doctors are:")
+    for num, doc in enumerate(doc_lst):
+        print(f"{num+1}: {doc[0]} {doc[1]}")
+    
+    while True:
+        try:
+            doc_idx = int(input("Select which doctor you would like to see calandar for\n \
+                                (Please enter the number corresponding with the doctor):"))-1
+            break
+        except:
+            print("Please enter a valid number")
+
+    doc = doc_lst[doc_idx]
+    doc_id = doc[2]
+    cursor.execute("select date, patient\n"
+                   "from appointments\n"
+                  f"where meeting=\"{doc_id}\"")
+    schedule = cursor.fetchall()
+
+    print("The apointments for {0} are:", doc[1])
+    for appoint in schedule:
+        print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
+
 def access_reports(action):
     pass
 
@@ -99,24 +133,25 @@ def create_account():
 	pass
 	
 def view_orders():
-	pass
+	curr.execute("select * from orders")
+	orders = curr.fetchall()
+	for order in orders:
+		print(order)
 
-def view_bills():
-	pass
-
-def quit_program(action):
-    print("Quiting program")
-    conn.close()
+def quit_program():
+	print("Quiting program")
+	conn.close()
+	sys.exit(0)
 
 def wrong_option(action):
     print("Invalid option")
 	
-# Pulls whole login table from database and attempts a login.
-#	If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-
+''' Pulls whole login table from database and attempts a login.
+	If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
+'''
 def try_login(u,p):
 
-	cursor.execute("SELECT * from 'login'")
+	cursor.execute("SELECT * FROM login")
 	
 	logins = cursor.fetchall()
 	logindetails = []
@@ -137,12 +172,12 @@ def try_login(u,p):
 					else:
 						print("Wrong password. Please try again, or input q to close. \n")
 						print("Password: ")
-						p = input(prompt)
+						p = input()
 		print("Username not found. Please try again, or input q to close. \n")
 		print("Username: ")
-		u = input(prompt)
+		u = input()
 					
-		
+
 
 def menu(priv):
 
@@ -173,7 +208,7 @@ def menu(priv):
         "admin" : adminPrompt,
         "medicalStaff" : staffPrompt,
         "patient" : patientPrompt,
-        "scheduler" : schedulerPrompt
+        "scheduler" : schedulerPrompt,
     }
 	
 	print(action_switch.get(user_in, "Invalid Option"))
@@ -183,12 +218,23 @@ def menu(priv):
 
 def main():
 	print("Welcome to the medical clinic, please log in:")
+	'''
+	prompt =  "\n===============================\n" \
+            + "1. Schedule an appointment\n" \
+            + "2. View medical record\n" \
+            + "3. View Doctor calendar\n" \
+            + "4. View reports\n" \
+            + "5. Quit\n" \
+            + "===============================\n" \
+            + "Enter in the number for the action:"
+	'''
+
 	print("Username: ")
-	u = input(prompt)
+	u = input()
 	print("Password: ")
-	p = input(prompt)
+	p = input()
 	
-	'''[userID, password, patient, employee, privilege, LoginTime, LogoutTime]'''
+	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
 	loginDetails = try_login(u,p)
 	priv = login_details[4]
 

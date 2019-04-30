@@ -151,7 +151,7 @@ def menu(priv):
 
 
 def main():
-    print("Welcome to the medical clinic, please log in:")
+	print("Welcome to the medical clinic, please log in:")
 	print("Username: ")
 	u = input(prompt)
 	print("Password: ")

@@ -102,7 +102,7 @@ def schedule_appoint():
 def create_order():
     oID = input("Enter in the ID for this order: ")
     cID = input("Enter in the ID for the customer: ")
-    stID= input("Enter in the ID for the staff: ")
+    stID = input("Enter in the ID for the staff: ")
     dID = input("Enter in the ID for the diagnostic: ")
     res = input("Enter in the results: ")
     
@@ -112,7 +112,7 @@ def create_order():
     cursor.fetchall()
     conn.commit()
     count=cursor.rowcount
-    print(cound, "Your order has been succesfully created. Returning back to main menu")
+    print(count, "Your order has been succesfully created. Returning back to main menu")
 
 def create_patient():
     attrs = ["", "", ""]

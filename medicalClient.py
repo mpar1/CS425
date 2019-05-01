@@ -84,11 +84,50 @@ def access_reports():
             f"Total Office Visits: {visits} \n"
             "\n====End of Report====\n")
 
+def show_patients(verbose=False):
+    cursor.execute("SELECT * FROM patient")
+    patients = cursor.fetchall()
+    print("Here is a list of all of the patients: ")
+    print("\n===============================\n")
+    for row in patients:
+        info = f"ID: {row[3]}  | Name: {row[0]} {row[1]}"
+        if verbose:
+            info += f" | Address: {row[2]}\n"
+        else:
+            info += "\n"
+        print(info)
+    print("\n===============================\n")
+
+def show_employees(verbose=False): #no grouping between doc and others
+    cursor.execute("SELECT * FROM employee")
+    employees = cursor.fetchall()
+    print("Here is a list of all of the employees: ")
+    print("\n===============================\n")
+    for row in employees:
+        info = f"ID: {row[2]} | Name: {row[0]} {row[1]}"
+        if verbose:
+            info += f" | Job Type: {row[3]}\n"
+        else:
+            info += "\n"
+        print(info)
+    print("\n===============================\n")
 
 def schedule_appoint():
     date= input("Enter in the date(yyyy-mm-dd) of the appointment: " )
-    pID = input("Enter in the ID of the patient: ")
-    sID = input("Enter in the ID of staff meeting the patient: ")
+    pID, sID = "", ""
+    while pID != "v":
+        if pID == "v":
+            show_patients()
+        else:
+            print("View the list of patients by typing \"v\"")
+        pID = input("Enter in the ID of the patient: ")
+
+    while sID != "v":
+        if sID == "v":
+            show_employees()
+        else:
+            print("View the list of employees by typing \"v\"")  
+        sID = input("Enter in the ID of staff meeting the patient: ")
    
     PGsql = """insert into appointments(appointDate, patient, meeting)
                 values(%s, %s, %s);"""
@@ -100,12 +139,18 @@ def schedule_appoint():
     print(count,"Your Appointment has been created. Returing back to the main menu. ")
 
 def create_order():
-    oID = input("Enter in the ID for this order: ")
+    cID, stID = "", ""
     cID = input("Enter in the ID for the customer: ")
-    stID = input("Enter in the ID for the staff: ")
+    while stID != "v":
+        if stID == "v":
+            show_patients()
+        else:
+            print("View the list of patients by typing \"v\"")
+        stID = input("Enter in the ID for the staff: ")
     dID = input("Enter in the ID for the diagnostic: ")
     res = input("Enter in the results: ")
-    
+    cursor.execute("select max(patientID) from patient")
+    oID = int(cursor.fetchone()[0])+1
     pgsql = """insert into orders(orderID, customerID, staffID, diagnosticID, results)
                 values(%s, %s, %s, %s, %s)"""
     cursor.execute(pgsql, (oID, cID, stID, dID, res))
@@ -145,20 +190,10 @@ def create_account():
     while True:
         priv = input("Privilege (patient, medicalStaff, scheduler, admin): ")
         if priv == "patient":
-            cursor.execute("SELECT * FROM patient")
-            patients = cursor.fetchall()
-            print("\n===============================\n")
-            for row in patients:
-                print("ID: " + row[3] + " | Name: " + row[0] + " " + row[1] + " | Address: " + row[2] + "\n")
-            print("\n===============================\n")
+            show_patients(True)
             break
         elif priv == "medicalStaff" or priv == "scheduler" or priv == "admin":
-            cursor.execute("SELECT * FROM employee")
-            employees = cursor.fetchall()
-            print("\n===============================\n")
-            for row in employees:
-                print("ID: " + row[2] + " | Name: " + row[0] + " " + row[1] + " | Job Type: " + row[3] + "\n")
-            print("\n===============================\n")
+            show_employees(True)
             break
         else: 
             print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
@@ -221,11 +256,11 @@ def try_login():
 
 def welcome_login(): #wrapper
     print("Welcome to the medical clinic, please log in:")
-    try_login()
+    return try_login()
 
 def logout():
     print("Logging out\n")
-    welcome_login()
+    return welcome_login()
 
 def menu(priv):
     start_line = ("\n===============================\n")
@@ -296,13 +331,16 @@ def do_action(priv, action):
 
 def main():
     # [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-    login_details = welcome_login()
-    priv = login_details[4]
-    #priv = "admin"
-    print(f"Welcome, {login_details[0]}! Please select any of the following: ")
+    #login_details = welcome_login()
+    #priv = login_details[4]
+    priv = "admin"
+    #print(f"Welcome, {login_details[0]}! Please select any of the following: ")
     while True:
         action = input(menu(priv))
-        do_action(priv, action)()
+        login_details = do_action(priv, action)() #update on relogin
+        if login_details:
+            priv = login_details[4]
+
 
         
 main()

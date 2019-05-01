@@ -86,7 +86,18 @@ def access_reports():
 
 
 def schedule_appoint():
-    
+    date= input("Enter in the date(yyyy-mm-dd) of the appointment: " )
+    pID = input("Enter in the ID of the patient: ")
+    sID = input("Enter in the ID of staff meeting the patient: ")
+   
+    PGsql = """insert into appointments(appointDate, patient, meeting)
+                values(%s, %s, %s);"""
+   
+    cursor.execute(PGsql, (date, pID, sID))
+    cursor.fetchall()
+    conn.commit()
+    count= cursor.rowcount
+    print(count,"Your Appointment has been created. Returing back to the main menu. ")
 
 def create_order():
     oID = input("Enter in the ID for this order: ")

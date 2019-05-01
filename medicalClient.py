@@ -95,13 +95,10 @@ def create_order():
 	pass
 
 def create_account():
-	print("New Username: ")
-	user = input()
-	print("New Password: ")
-	pw = input()
-	print("Privilege (patient, medicalStaff, scheduler, admin): ")
+	user = input("New Username: ")
+	pw = input("New Password: ")
 	while True:
-		priv = input()
+		priv = input("Privilege (patient, medicalStaff, scheduler, admin): ")
 		if priv == "patient":
 			cursor.execute("SELECT * FROM patient")
 			patients = cursor.fetchall()
@@ -120,18 +117,18 @@ def create_account():
 			break
 		else: 
 			print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
-	print("Please input the ID of the person you wish to connect this account to: ")
-	id = input()
-	loginDet = [user, pw]
-	if priv == "patient":
-		loginDet.append(str(id))
-		loginDet.append(None)
-	else:
-		loginDet.append(None)
-		loginDet.append(str(id))
-	loginDet.append(priv)
 	
-	command = f"INSERT INTO login VALUES ({row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]})"
+	id = input("Please input the ID of the person you wish to connect this account to: ")
+	log = [user, pw]
+	if priv == "patient":
+		log.append(id)
+		log.append(None)
+	else:
+		log.append(None)
+		log.append(id)
+	log.append(priv)
+	
+	command = f"INSERT INTO login VALUES ({log[0]}, {log[1]}, {log[2]}, {log[3]}, {log[4]})"
 	cursor.execute(command)
 	conn.commit()	
 	print("Login created!")
@@ -249,6 +246,7 @@ def do_action(priv, action):
 		"patient" : patient,
 		"scheduler" : scheduler
 	}
+
 	return action_switch.get(priv).get(action, wrong_option)
 
 def main():

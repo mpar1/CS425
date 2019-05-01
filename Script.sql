@@ -11,7 +11,7 @@ create table login (
 	privilege varchar(12),
 	LoginTime time,
 	LogoutTime time,
-	patient varchar(16) unique,
+	patient varchar(16),
 	employee varchar(16),
 	primary key (userID),
 	foreign key (patient) references patient(patientID),

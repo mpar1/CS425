@@ -112,22 +112,20 @@ def show_employees(verbose=False): #no grouping between doc and others
         print(info)
     print("\n===============================\n")
 
+def view_prompt(prompt, lst_name, show_func): #gives option to print vals in database
+    u_in = ""
+    while (not u_in.isalnum() and u_in != "v") or u_in == "v":
+        if u_in == "v":
+            show_func()
+        else:
+            print(f"View the list of {lst_name} by typing \"v\"")
+        u_in = input(prompt)
+    return u_in
+
 def schedule_appoint():
     date= input("Enter in the date(yyyy-mm-dd) of the appointment: " )
-    pID, sID = "", ""
-    while pID != "v":
-        if pID == "v":
-            show_patients()
-        else:
-            print("View the list of patients by typing \"v\"")
-        pID = input("Enter in the ID of the patient: ")
-
-    while sID != "v":
-        if sID == "v":
-            show_employees()
-        else:
-            print("View the list of employees by typing \"v\"")  
-        sID = input("Enter in the ID of staff meeting the patient: ")
+    pID = view_prompt("Enter in the ID of the patient: ", "patients", show_patients)
+    sID = view_prompt("Enter in the ID of staff meeting the patient: ", "employees", show_employees)
    
     PGsql = """insert into appointments(appointDate, patient, meeting)
                 values(%s, %s, %s);"""
@@ -139,14 +137,9 @@ def schedule_appoint():
     print(count,"Your Appointment has been created. Returing back to the main menu. ")
 
 def create_order():
-    cID, stID = "", ""
-    cID = input("Enter in the ID for the customer: ")
-    while stID != "v":
-        if stID == "v":
-            show_patients()
-        else:
-            print("View the list of patients by typing \"v\"")
-        stID = input("Enter in the ID for the staff: ")
+    cID = view_prompt("Enter in the ID for the customer: ", "customers", show_patients)
+    stID = view_prompt("Enter in the ID for the staff: ", "employees", show_employees)
+
     dID = input("Enter in the ID for the diagnostic: ")
     res = input("Enter in the results: ")
     cursor.execute("select max(patientID) from patient")

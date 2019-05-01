@@ -7,12 +7,13 @@ create index staff_fullname on employee(fname,lname);
 
 create table login (
 	userID varchar(16),
+	password vachar(20),
 	privilege varchar(12),
 	LoginTime time,
 	LogoutTime time,
-	primary key (userID),check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient'))
+	primary key (userID),check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient')),
 	foreign key patient references patient(patientID),
-	foreign key employee references employee(staffID)
+	foreign key employee references employee(staffID),
 	check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient')),
 	check (patient=null or employee=null)
 );
@@ -33,8 +34,8 @@ create table orders (
 	results text,
 	primary key (orderID),
 	foreign key (diagnosticID) references diagnostic(ID),
-	foreign key (customerID) references patient(patientID)
-	foreign key (staffID) references employee(staffID)
+	foreign key (customerID) references patient(patientID),
+	foreign key (staffID) references employee(staffID),
 );
 
 create table patient (

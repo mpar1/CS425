@@ -18,9 +18,9 @@ cursor = conn.cursor()
 def schedule_appoint():
     pass
 	
-def access_records(var):
+def access_records():
 	cursor.execute("select customerID, category"
-				   "from orders join diagnostic"
+                   "from orders join diagnostic"
 				   "on orders.diagnosticID=diagnostic.ID"
 				   "group by customerID")
 	records = cursor.fetchall()
@@ -29,7 +29,7 @@ def access_records(var):
 		print(f"Patient: {record[0]}\nList of all treatments: {record[1]}\n")
 
 
-def access_calendar(action): #view appointments for a specific doctor
+def access_calendar(): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                  + "from employee\n"
                  + "where jobtype=\"Medical Staff\";")
@@ -57,6 +57,7 @@ def access_calendar(action): #view appointments for a specific doctor
     print("The apointments for {0} are:", doc[1])
     for appoint in schedule:
         print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
+
 
 def access_reports():
 	cursor.execute("SELECT * FROM orders JOIN diagnostic ON orders.diagnosticID=diagnostic.ID")
@@ -136,7 +137,8 @@ def create_account():
 	loginDet.append(priv)
 	
 	command = f"INSERT INTO login VALUES ({row[0]}, {row[1]}, {row[2]}, {row[3]}, {row[4]})"
-	
+	cursor.execute(command)
+	conn.commit()	
 	print("Login created!")
 	
 def view_orders():
@@ -158,69 +160,69 @@ def wrong_option():
 # Pulls whole login table from database and attempts a login.
 # If successful, returns login details as a list [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
 
-def try_login(u,p):
-
+def try_login():
 	cursor.execute("SELECT * FROM login")
 	logins = cursor.fetchall()
-	logindetails = []
+	user_info = None
+	u_name = ""
+	p_word = ""
+	valid_user = False
 	
-	while True:
-		if u == "q":
+	while valid_user == False:
+		u_name = input("Username: ")	
+		if u_name == 'q':
 			quit_program()
 		for row in logins:
-			if row[0] == u:
-				while True:
-					if row[1] == p:
-						for x in row:
-							logindetails.append(x)
-						print("Login Successful!")
-						return logindetails
-					elif p == "q": #Doesn't work if password is q
-						quit_program()
-					else:
-						print("Wrong password. Please try again, or input q to close. \n")
-						print("Password: ")
-						p = input()
-		print("Username not found. Please try again, or input q to close. \n")
-		print("Username: ")
-		u = input()
-					
+			if row[0] == u_name:
+				user_info = row
+				valid_user = True
+				break
+		else:
+			print("Username not found. Please try again, or input q to close. \n")
 
+	while True:
+		p_word = input("Password: ")
+		if user_info[1] == p_word:
+			print("Login Successful!")
+			return [val for val in user_info] #convert user info to array
+		elif p_word == "q": #Doesn't work if password is q
+			quit_program()
+		else:
+			print("Wrong password. Please try again, or input q to close. \n")
+					
 def menu(priv):
 	start_line = ("\n===============================\n")
 	adminPrompt =  "1. Schedule an appointment\n" \
-            + "2. Create new patient\n" \
-            + "3. Create new user account\n" \
-            + "4. View reports\n" 
+                 + "2. Create new patient\n" \
+                 + "3. Create new user account\n" \
+                 + "4. View reports\n" 
 	
-	staffPrompt =  "1. View and update patient record\n" \
-            + "2. Create an order\n" \
-            + "3. View calendar and schedule appointment\n"
+	staffPrompt =  "1. View patient records\n" \
+                 + "2. Create an order\n" \
+                 + "3. View calendar and schedule appointment\n"
 	
 	patientPrompt =  "1. View orders\n" \
-            + "2. View bills\n" \
+                   + "2. View bills\n" \
 		
 	schedulerPrompt =  "1. Schedule an appointment\n" \
-            + "2. Create new patient\n" \
-            + "3. Create new user account\n" \
-            + "4. View reports\n" 
+                     + "2. Create new patient\n" \
+                     + "3. Create new user account\n" \
+                     + "4. View reports\n" 
 	
 	endcl = "5. Quit\n" \
-            + "===============================\n" \
-            + "Enter in the number for the action:"
+          + "===============================\n" \
+          + "Enter in the number for the action:"
 			
 	action_switch = {
         "admin" : adminPrompt,
         "medicalStaff" : staffPrompt,
         "patient" : patientPrompt,
         "scheduler" : schedulerPrompt,
-    }
-
+	}
 	return start_line + action_switch.get(priv, "Invalid Option") + endcl
 
 
 def do_action(priv, action):
-
 	admin = {
 		"1" : schedule_appoint,
 		"2" : create_patient,
@@ -250,23 +252,16 @@ def do_action(priv, action):
 		"patient" : patient,
 		"scheduler" : scheduler
 	}
-		
 	action_switch.get(priv).get(action, wrong_option)
 
 def main():
 	print("Welcome to the medical clinic, please log in:")
 
-	print("Username: ")
-	u = input()
-	print("Password: ")
-	p = input()
-	
 	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-	login_details = try_login(u,p)
+	login_details = try_login()
 	priv = login_details[4]
 
-	print("Welcome, " + u + "! Please select any of the following: ")
-
+	print("Welcome, " + login_details[0] + "! Please select any of the following: ")
 	action = ""
 	while action != "5":
 		action = input(menu(priv))

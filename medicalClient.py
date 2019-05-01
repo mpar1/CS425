@@ -6,17 +6,11 @@ import sys
 up.uses_netloc.append("postgres")
 url = up.urlparse("postgres://fcbeygin:nPzIeoASpjJTLArcn4BCdZB_SzchCX78@isilo.db.elephantsql.com:5432/fcbeygin")
 conn = db.connect(database=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port)
-
+        		user=url.username,
+        		password=url.password,
+        		host=url.hostname,
+        		port=url.port)
 cursor = conn.cursor()
-
-
-
-def schedule_appoint():
-    pass
 	
 def access_records():
 	cursor.execute("select customerID, category\n"
@@ -58,40 +52,42 @@ def access_calendar(): #view appointments for a specific doctor
     for appoint in schedule:
         print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
 
+def view_orders():
+	cursor.execute("select * from orders")
+	orders = cursor.fetchall()
+	print("Here is the log of all orders:")
+	for order in orders:
+		print(order)
 
 def access_reports():
 	cursor.execute("SELECT * FROM orders JOIN diagnostic ON orders.diagnosticID=diagnostic.ID")
 	orders = cursor.fetchall() #[orderID,customerID,staffID,diagnosticID,results,price,category]
 	costsum = 0
-	labs = 0
-	mris = 0
-	xrays = 0
-	visits = 0
+	t_counts = {"Lab":0, "MRI":0, "Xray":0, "Office Visit":0}
 	visitrev = 0
 	for row in orders:
 		costsum += row[5]
-		if row[6] == "Lab":
-			labs += 1
-		elif row[6] == "MRI":
-			mris += 1
-		elif row[6] == "Xray":
-			xrays += 1
-		elif row[6] == "Office Visit":
-			visits += 1
+		row_type = row[6]
+		t_counts[row_type] += 1
+		if row_type == "Office Visit":
 			visitrev += row[5]
 	
+	mris, xrays, labs, visits = t_counts["MRI"], t_counts["Xray"], t_counts["Lab"], t_counts["Office Visit"]
 	print("\n=====================\n")
-	print("Overall order summary: \n")
-	print(f"Total number of orders: {str(len(orders))} \n")
-	print(f"Total revenue from all diagnostics: {str(costsum)} \n")
-	print(f"Total revenue from all doctor visits: {str(visitrev)} \n")
-	print(f"Total MRIs: {str(mris)} \n")
-	print(f"Total XRays: {str(xrays)} \n")
-	print(f"Total Labs: {str(labs)} \n")
-	print(f"Total Office Visits: {str(visits)} \n")
-	print("\n====End of Report====\n")
+	print("Overall order summary: \n"
+		 f"Total number of orders: {len(orders)} \n"
+		 f"Total revenue from all diagnostics: {costsum} \n"
+		 f"Total revenue from all doctor visits: {visitrev} \n"
+		 f"Total MRIs: {mris} \n"
+		 f"Total XRays: {xrays} \n"
+		 f"Total Labs: {labs} \n"
+		 f"Total Office Visits: {visits} \n"
+		  "\n====End of Report====\n")
 
-	
+
+def schedule_appoint():
+    pass
+
 def create_patient():
 	pass
 
@@ -139,13 +135,6 @@ def create_account():
 	cursor.execute(command)
 	conn.commit()	
 	print("Login created!")
-	
-def view_orders():
-	cursor.execute("select * from orders")
-	orders = cursor.fetchall()
-	print("Here is the log of all orders:")
-	for order in orders:
-		print(order)
 
 def quit_program():
 	print("Quiting program")
@@ -163,8 +152,6 @@ def try_login():
 	cursor.execute("SELECT * FROM login")
 	logins = cursor.fetchall()
 	user_info = None
-	u_name = ""
-	p_word = ""
 	valid_user = False
 	
 	while valid_user == False:
@@ -189,6 +176,14 @@ def try_login():
 		else:
 			print("Wrong password. Please try again, or input q to close. \n")
 
+
+def welcome_login(): #wrapper
+	print("Welcome to the medical clinic, please log in:")
+	try_login()
+
+def logout():
+	print("Logging out\n")
+	welcome_login()
 
 def menu(priv):
 	start_line = ("\n===============================\n")
@@ -230,22 +225,22 @@ def do_action(priv, action):
 		"2" : create_patient,
 		"3" : create_account,
 		"4" : access_reports,
-		"5" : try_login
+		"5" : logout
 	}
 	med_staff = {
 		"1" : access_records,
 		"2" : create_order,
 		"3" : access_calendar,
-		"4" : try_login
+		"4" : logout
 	}
 	patient = {
 		"1" : view_orders,
-		"2" : try_login
+		"2" : logout
 	}
 	scheduler = {
 		"1" : view_orders,
 		"2" : access_calendar,
-		"3" : try_login
+		"3" : logout
 	}
 
 	action_switch = {
@@ -257,19 +252,14 @@ def do_action(priv, action):
 	return action_switch.get(priv).get(action, wrong_option)
 
 def main():
-	print("Welcome to the medical clinic, please log in:")
-
-	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-	login_details = try_login()
-	priv = login_details[4]
+	# [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
+	#login_details = welcome_login()
+	#priv = login_details[4]
 	priv = "admin"
-	print("Welcome, " + login_details[0] + "! Please select any of the following: ")
-	action = ""
+	#print(f"Welcome, {login_details[0]}! Please select any of the following: ")
 	while True:
 		action = input(menu(priv))
 		do_action(priv, action)()
 
         
-        
-
 main()

@@ -19,9 +19,9 @@ def schedule_appoint():
     pass
 	
 def access_records():
-	cursor.execute("select customerID, category"
-                   "from orders join diagnostic"
-				   "on orders.diagnosticID=diagnostic.ID"
+	cursor.execute("select customerID, category\n"
+				   "from orders join diagnostic\n"
+				   "on orders.diagnosticID=diagnostic.ID\n"
 				   "group by customerID")
 	records = cursor.fetchall()
 	print("Here are all the patient records")
@@ -91,7 +91,6 @@ def access_reports():
 	print(f"Total Office Visits: {str(visits)} \n")
 	print("\n====End of Report====\n")
 
-	
 	
 def create_patient():
 	pass
@@ -189,29 +188,32 @@ def try_login():
 			quit_program()
 		else:
 			print("Wrong password. Please try again, or input q to close. \n")
-					
+
+
 def menu(priv):
 	start_line = ("\n===============================\n")
 	adminPrompt =  "1. Schedule an appointment\n" \
                  + "2. Create new patient\n" \
                  + "3. Create new user account\n" \
-                 + "4. View reports\n" 
+                 + "4. View reports\n" \
+				 + "5. Logout\n"
 	
 	staffPrompt =  "1. View patient records\n" \
                  + "2. Create an order\n" \
-                 + "3. View calendar and schedule appointment\n"
+                 + "3. View calendar and schedule appointment\n" \
+				 + "4. Logout\n"
 	
 	patientPrompt =  "1. View orders\n" \
-                   + "2. View bills\n" \
+				   + "2. Logout\n"
 		
 	schedulerPrompt =  "1. Schedule an appointment\n" \
                      + "2. Create new patient\n" \
                      + "3. Create new user account\n" \
-                     + "4. View reports\n" 
+                     + "4. View reports\n" \
+					 + "5. Logout\n"
 	
-	endcl = "5. Quit\n" \
-          + "===============================\n" \
-          + "Enter in the number for the action:"
+	endcl = "===============================\n" \
+          + "Enter in the number for the action: "
 			
 	action_switch = {
         "admin" : adminPrompt,
@@ -228,22 +230,22 @@ def do_action(priv, action):
 		"2" : create_patient,
 		"3" : create_account,
 		"4" : access_reports,
-		"5" : quit_program
+		"5" : try_login
 	}
 	med_staff = {
 		"1" : access_records,
 		"2" : create_order,
 		"3" : access_calendar,
-		"4" : quit_program
+		"4" : try_login
 	}
 	patient = {
 		"1" : view_orders,
-		"2" : quit_program
+		"2" : try_login
 	}
 	scheduler = {
 		"1" : view_orders,
 		"2" : access_calendar,
-		"3" : quit_program
+		"3" : try_login
 	}
 
 	action_switch = {
@@ -252,7 +254,7 @@ def do_action(priv, action):
 		"patient" : patient,
 		"scheduler" : scheduler
 	}
-	action_switch.get(priv).get(action, wrong_option)
+	return action_switch.get(priv).get(action, wrong_option)
 
 def main():
 	print("Welcome to the medical clinic, please log in:")
@@ -260,12 +262,12 @@ def main():
 	#[userID, password, patient, employee, privilege, LoginTime, LogoutTime]
 	login_details = try_login()
 	priv = login_details[4]
-
+	priv = "admin"
 	print("Welcome, " + login_details[0] + "! Please select any of the following: ")
 	action = ""
-	while action != "5":
+	while True:
 		action = input(menu(priv))
-		do_action(priv, action)
+		do_action(priv, action)()
 
         
         

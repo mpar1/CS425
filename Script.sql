@@ -11,12 +11,15 @@ create table login (
 	privilege varchar(12),
 	LoginTime time,
 	LogoutTime time,
-	primary key (userID),check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient')),
-	foreign key patient references patient(patientID),
-	foreign key employee references employee(staffID),
+	patient varchar(16),
+	employee varchar(16),
+	primary key (userID),
+	foreign key (patient) references patient(patientID),
+	foreign key (employee) references employee(staffID),
 	check (privilege in ('admin', 'scheduler', 'medicalStaff', 'patient')),
 	check (patient=null or employee=null)
 );
+
 
 create table diagnostic (
 	ID varchar(16),

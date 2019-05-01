@@ -88,50 +88,72 @@ def access_reports():
 def schedule_appoint():
     pass
 
-def create_patient():
-	pass
-
 def create_order():
-	pass
+    pass
+
+def create_patient():
+    attrs = ["", "", ""]
+    while True:
+        attrs[0] = input("Enter in the first name of the new patient: ")
+        attrs[1] = input("Enter in the last name of the patient: ")
+        if attrs[0].isalpha() and attrs[1].isalpha(): #check valid names 
+            break
+        else:
+            print("Invalid name")
+    while True:
+        attrs[2] = input("Enter in the new patient's address: ")
+        if attrs[2][0].isdigit():
+            break
+        else:
+            print("Invalid address")
+    try:
+        cursor.execute("select max(patientID) from patient")
+        id = int(cursor.fetchone()[0])+1
+        command = f"insert into patient values ({attrs[0]}, {attrs[1]}, {attrs[2]}, {id})"
+        cursor.execute(command)
+        conn.commit()
+        print("Successfully added patient")
+    except:
+        print("Error while trying to add new patient")
 
 def create_account():
-	user = input("New Username: ")
-	pw = input("New Password: ")
-	while True:
-		priv = input("Privilege (patient, medicalStaff, scheduler, admin): ")
-		if priv == "patient":
-			cursor.execute("SELECT * FROM patient")
-			patients = cursor.fetchall()
-			print("\n===============================\n")
-			for row in patients:
-				print("ID: " + row[3] + " | Name: " + row[0] + " " + row[1] + " | Address: " + row[2] + "\n")
-			print("\n===============================\n")
-			break
-		elif priv == "medicalStaff" or priv == "scheduler" or priv == "admin":
-			cursor.execute("SELECT * FROM employee")
-			employees = cursor.fetchall()
-			print("\n===============================\n")
-			for row in employees:
-				print("ID: " + row[2] + " | Name: " + row[0] + " " + row[1] + " | Job Type: " + row[3] + "\n")
-			print("\n===============================\n")
-			break
-		else: 
-			print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
-	
-	id = input("Please input the ID of the person you wish to connect this account to: ")
-	log = [user, pw]
-	if priv == "patient":
-		log.append(id)
-		log.append(None)
-	else:
-		log.append(None)
-		log.append(id)
-	log.append(priv)
-	
-	command = f"INSERT INTO login VALUES ({log[0]}, {log[1]}, {log[2]}, {log[3]}, {log[4]})"
-	cursor.execute(command)
-	conn.commit()	
-	print("Login created!")
+    user = input("New Username: ")
+    pw = input("New Password: ")
+    while True:
+        priv = input("Privilege (patient, medicalStaff, scheduler, admin): ")
+        if priv == "patient":
+            cursor.execute("SELECT * FROM patient")
+            patients = cursor.fetchall()
+            print("\n===============================\n")
+            for row in patients:
+                print("ID: " + row[3] + " | Name: " + row[0] + " " + row[1] + " | Address: " + row[2] + "\n")
+            print("\n===============================\n")
+            break
+        elif priv == "medicalStaff" or priv == "scheduler" or priv == "admin":
+            cursor.execute("SELECT * FROM employee")
+            employees = cursor.fetchall()
+            print("\n===============================\n")
+            for row in employees:
+                print("ID: " + row[2] + " | Name: " + row[0] + " " + row[1] + " | Job Type: " + row[3] + "\n")
+            print("\n===============================\n")
+            break
+        else: 
+            print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
+
+    id = input("Please input the ID of the person you wish to connect this account to: ")
+    log = [user, pw]
+    if priv == "patient":
+        log.append(id)
+        log.append(None)
+    else:
+        log.append(None)
+        log.append(id)
+    log.append(priv)
+
+    command = f"INSERT INTO login VALUES ({log[0]}, {log[1]}, {log[2]}, {log[3]}, {log[4]})"
+    cursor.execute(command)
+    conn.commit()	
+    print("Login created!")
 
 def quit_program():
 	print("Quiting program")

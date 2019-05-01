@@ -86,10 +86,22 @@ def access_reports():
 
 
 def schedule_appoint():
-    pass
+    
 
 def create_order():
-    pass
+    oID = input("Enter in the ID for this order: ")
+    cID = input("Enter in the ID for the customer: ")
+    stID= input("Enter in the ID for the staff: ")
+    dID = input("Enter in the ID for the diagnostic: ")
+    res = input("Enter in the results: ")
+    
+    pgsql = """insert into orders(orderID, customerID, staffID, diagnosticID, results)
+                values(%s, %s, %s, %s, %s)"""
+    cursor.execute(pgsql, (oID, cID, stID, dID, res))
+    cursor.fetchall()
+    conn.commit()
+    count=cursor.rowcount
+    print(cound, "Your order has been succesfully created. Returning back to main menu")
 
 def create_patient():
     attrs = ["", "", ""]

@@ -7,7 +7,7 @@ create index staff_fullname on employee(fname,lname);
 
 create table login (
 	userID varchar(16),
-	password vachar(20),
+	password varchar(20),
 	privilege varchar(12),
 	LoginTime time,
 	LogoutTime time,

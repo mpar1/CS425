@@ -16,7 +16,7 @@ def access_records():
     cursor.execute("select customerID, category\n"
                     "from orders join diagnostic\n"
                     "on orders.diagnosticID=diagnostic.ID\n"
-                    "group by customerID")
+                    "group by customerID, category")
     records = cursor.fetchall()
     print("Here are all the patient records")
     for record in records:
@@ -26,7 +26,7 @@ def access_records():
 def access_calendar(): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                     + "from employee\n"
-                    + "where jobtype=\"Medical Staff\";")
+                    + "where jobtype='Medical Staff';")
     doc_lst = cursor.fetchall()
 
     print("The doctors are:")
@@ -35,22 +35,22 @@ def access_calendar(): #view appointments for a specific doctor
 
     while True:
         try:
-            doc_idx = int(input("Select which doctor you would like to see calandar for\n \
-                                (Please enter the number corresponding with the doctor):"))-1
+            doc_idx = int(input("Select which doctor you would like to see calandar for\n" \
+                              + "(Please enter the number corresponding with the doctor): "))-1
             break
         except:
             print("Please enter a valid number")
 
     doc = doc_lst[doc_idx]
     doc_id = doc[2]
-    cursor.execute("select date, patient\n"
+    cursor.execute("select appointdate, patient\n"
                     "from appointments\n"
-                    f"where meeting=\"{doc_id}\"")
+                    f"where meeting='{doc_id}'")
     schedule = cursor.fetchall()
 
-    print("The apointments for {0} are:", doc[1])
+    print("The apointments for {0} are:".format(doc[1]))
     for appoint in schedule:
-        print("Patient: {0}\nDate: {1}\n", appoint[0], appoint[1])
+        print("Patient: {1}\nDate: {0}\n".format(appoint[0], appoint[1]))
 
 def view_orders():
     cursor.execute("select * from orders")
@@ -265,8 +265,9 @@ def menu(priv):
 
     staffPrompt =  "1. View patient records\n" \
                     + "2. Create an order\n" \
-                    + "3. View calendar and schedule appointment\n" \
-                    + "4. Logout\n"
+                    + "3. View calendar\n" \
+                    + "4. Schedule appointment\n" \
+                    + "5. Logout\n"
 
     patientPrompt =  "1. View orders\n" \
                     + "2. Logout\n"
@@ -301,7 +302,8 @@ def do_action(priv, action):
         "1" : access_records,
         "2" : create_order,
         "3" : access_calendar,
-        "4" : logout
+        "4" : schedule_appoint,
+        "5" : logout
     }
     patient = {
         "1" : view_orders,
@@ -315,7 +317,7 @@ def do_action(priv, action):
 
     action_switch = {
         "admin" : admin,
-        "medical staff" : med_staff,
+        "medicalStaff" : med_staff,
         "patient" : patient,
         "scheduler" : scheduler
     }
@@ -324,15 +326,18 @@ def do_action(priv, action):
 
 def main():
     # [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
-    #login_details = welcome_login()
-    #priv = login_details[4]
-    priv = "admin"
-    #print(f"Welcome, {login_details[0]}! Please select any of the following: ")
+    login_details = welcome_login()
+    for det in login_details:
+        print (det)
+    priv = login_details[2]
+    #priv = "admin"
+    print(f"Welcome, {login_details[0]}! Please select any of the following: ")
+    print("priv",  priv)
     while True:
         action = input(menu(priv))
         login_details = do_action(priv, action)() #update on relogin
         if login_details:
-            priv = login_details[4]
+            priv = login_details[2]
 
 
         

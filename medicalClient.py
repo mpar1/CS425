@@ -35,17 +35,17 @@ def access_calendar(): #view appointments for a specific doctor
 
     while True:
         try:
-            doc_idx = int(input("Select which doctor you would like to see calandar for\n" \
+            doc_idx = int(input("Select which doctor you would like to see the calandar for\n" \
                               + "(Please enter the number corresponding with the doctor): "))-1
+            doc = doc_lst[doc_idx]
             break
         except:
             print("Please enter a valid number")
 
-    doc = doc_lst[doc_idx]
     doc_id = doc[2]
     cursor.execute("select appointdate, patient\n"
-                    "from appointments\n"
-                    f"where meeting='{doc_id}'")
+                   "from appointments\n"
+                  f"where meeting='{doc_id}'")
     schedule = cursor.fetchall()
 
     print("The apointments for {0} are:".format(doc[1]))
@@ -92,9 +92,8 @@ def show_patients(verbose=False):
     for row in patients:
         info = f"ID: {row[3]}  | Name: {row[0]} {row[1]}"
         if verbose:
-            info += f" | Address: {row[2]}\n"
-        else:
-            info += "\n"
+            info += f" | Address: {row[2]}"
+
         print(info)
     print("\n===============================\n")
 
@@ -106,9 +105,8 @@ def show_employees(verbose=False): #no grouping between doc and others
     for row in employees:
         info = f"ID: {row[2]} | Name: {row[0]} {row[1]}"
         if verbose:
-            info += f" | Job Type: {row[3]}\n"
-        else:
-            info += "\n"
+            info += f" | Job Type: {row[3]}"
+            
         print(info)
     print("\n===============================\n")
 
@@ -332,7 +330,7 @@ def main():
     priv = login_details[2]
     #priv = "admin"
     print(f"Welcome, {login_details[0]}! Please select any of the following: ")
-    print("priv",  priv)
+    #print("priv",  priv)
     while True:
         action = input(menu(priv))
         login_details = do_action(priv, action)() #update on relogin

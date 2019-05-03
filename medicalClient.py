@@ -147,7 +147,7 @@ def create_order():
     pgsql = """insert into orders(orderID, customerID, staffID, diagnosticID, results)
                 values(ord%s, %s, %s, %s, %s)"""
     cursor.execute(pgsql, (oID, cID, stID, dID, res))
-    cursor.fetchall()
+    #cursor.fetchall()
     conn.commit()
     count=cursor.rowcount
     print(count, "Your order has been succesfully created. Returning back to main menu")

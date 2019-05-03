@@ -26,7 +26,7 @@ def access_records():
 def access_calendar(): #view appointments for a specific doctor
     cursor.execute("select fname, lname, staffID\n"
                     + "from employee\n"
-                    + "where jobtype='Medical Staff';")
+                    + "where jobtype='Medical Staff'")
     doc_lst = cursor.fetchall()
 
     print("The doctors are:")
@@ -97,6 +97,7 @@ def show_patients(verbose=False):
         print(info)
     print("\n===============================\n")
 
+
 def show_employees(verbose=False): #no grouping between doc and others
     cursor.execute("SELECT * FROM employee")
     employees = cursor.fetchall()
@@ -129,7 +130,7 @@ def schedule_appoint():
                 values(%s, %s, %s);"""
    
     cursor.execute(PGsql, (date, pID, sID))
-    cursor.fetchall()
+    #cursor.fetchall()
     conn.commit()
     count= cursor.rowcount
     print(count,"Your Appointment has been created. Returing back to the main menu. ")
@@ -143,7 +144,7 @@ def create_order():
     cursor.execute("select max(patientID) from patient")
     oID = int(cursor.fetchone()[0])+1
     pgsql = """insert into orders(orderID, customerID, staffID, diagnosticID, results)
-                values(%s, %s, %s, %s, %s)"""
+                values(ord%s, %s, %s, %s, %s)"""
     cursor.execute(pgsql, (oID, cID, stID, dID, res))
     cursor.fetchall()
     conn.commit()

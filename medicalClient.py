@@ -170,7 +170,7 @@ def create_patient():
     try:
         cursor.execute("select max(patientID) from patient")
         id = int(cursor.fetchone()[0])+1
-        command = f"insert into patient values ({attrs[0]}, {attrs[1]}, {attrs[2]}, {id})"
+        command = f"insert into patient values ('{attrs[0]}', '{attrs[1]}', '{attrs[2]}', '{id:03d}')"
         cursor.execute(command)
         conn.commit()
         print("Successfully added patient")

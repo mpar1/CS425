@@ -199,13 +199,17 @@ def create_account():
     log = [user, pw]
     if priv == "patient":
         log.append(id)
-        log.append(None)
+        log.append('NULL')
     else:
-        log.append(None)
+        log.append('NULL')
         log.append(id)
+
+    t = str(datetime.now().time())
+    t = t[:8]
+    log.append(t)
     log.append(priv)
 
-    command = f"INSERT INTO login VALUES ({log[0]}, {log[1]}, {log[2]}, {log[3]}, {log[4]})"
+    command = f"INSERT INTO login VALUES ('{log[0]}', '{log[1]}', '{log[5]}', '{log[4]}', '{log[4]}', {log[2]}, {log[3]})"
     cursor.execute(command)
     conn.commit()
     print("Login created!")

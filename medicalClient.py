@@ -61,17 +61,17 @@ def view_orders():
         print(order)
 
 def access_reports():
-    cursor.execute("SELECT * FROM orders JOIN diagnostic ON orders.diagnosticID=diagnostic.ID")
+    cursor.execute("SELECT * FROM orders as o JOIN diagnostic as d ON o.diagnosticID=d.ID")
     orders = cursor.fetchall() #[orderID,customerID,staffID,diagnosticID,results,price,category]
     costsum = 0
     t_counts = {"Lab":0, "MRI":0, "Xray":0, "Office Visit":0}
     visitrev = 0
     for row in orders:
-        costsum += row[5]
-        row_type = row[6]
+        costsum += row[6]
+        row_type = row[7]
         t_counts[row_type] += 1
         if row_type == "Office Visit":
-            visitrev += row[5]
+            visitrev += row[6]
 
     mris, xrays, labs, visits = t_counts["MRI"], t_counts["Xray"], t_counts["Lab"], t_counts["Office Visit"]
     print("\n=====================\n")
@@ -339,9 +339,9 @@ def main():
     for det in login_details:
         print (det)
     priv = login_details[2]
-    priv = "scheduler"
+    #priv = "scheduler"
     print(f"Welcome, {login_details[0]}! Please select any of the following: ")
-    #print("priv",  priv)
+
     while True:
         action = input(menu(priv))
         login_details = do_action(priv, action)() #update on relogin

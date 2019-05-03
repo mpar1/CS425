@@ -248,7 +248,7 @@ def try_login():
             cursor.execute(command2)
             logintime = cursor.fetchall()
             for t2 in logintime:
-                print("Login time recorded:", t2[0])
+                print("Login time recorded:", t2)
             return [val for val in user_info] #convert user info to array
         elif p_word == "q": #Doesn't work if password is q
             quit_program()
@@ -281,11 +281,10 @@ def menu(priv):
     patientPrompt =  "1. View orders\n" \
                     + "2. Logout\n"
 
-    schedulerPrompt =  "1. Schedule an appointment\n" \
-                        + "2. Create new patient\n" \
-                        + "3. Create new user account\n" \
-                        + "4. View reports\n" \
-                        + "5. Logout\n"
+    schedulerPrompt =  "1. View orders\n" \
+                        + "2. Schedule an appointment\n" \
+                        + "3. View calandar\n" \
+                        + "4. Logout\n"
 
     endcl = "===============================\n" \
             + "Enter in the number for the action: "
@@ -320,8 +319,9 @@ def do_action(priv, action):
     }
     scheduler = {
         "1" : view_orders,
-        "2" : access_calendar,
-        "3" : logout
+        "2" : schedule_appoint,
+        "3" : access_calendar,
+        "4" : logout
     }
 
     action_switch = {
@@ -339,7 +339,7 @@ def main():
     for det in login_details:
         print (det)
     priv = login_details[2]
-    #priv = "admin"
+    priv = "scheduler"
     print(f"Welcome, {login_details[0]}! Please select any of the following: ")
     #print("priv",  priv)
     while True:

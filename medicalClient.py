@@ -124,17 +124,21 @@ def view_prompt(prompt, lst_name, show_func): #gives option to print vals in dat
 
 def schedule_appoint():
     date= input("Enter in the date(yyyy-mm-dd) of the appointment: " )
-    pID = view_prompt("Enter in the ID of the patient: ", "patients", show_patients)
-    sID = view_prompt("Enter in the ID of staff meeting the patient: ", "employees", show_employees)
+    while True:
+        try:
+            pID_in = view_prompt("Enter in the ID of the patient: ", "patients", show_patients)
+            sID_in = view_prompt("Enter in the ID of staff meeting the patient: ", "employees", show_employees)
+            pID = int(pID_in)
+            sID = int(sID_in)
+            break
+        except:
+            print("One of the ids entered was invalid, please try again")
 
-    PGsql = """insert into appointments(appointDate, patient, meeting)
-                values(%s, %s, %s);"""
+    PGsql = f"insert into appointments(appointDate, patient, meeting) values('{date}', '{pID:03d}', '{sID:02d}');"
 
     cursor.execute(PGsql, (date, pID, sID))
-    #cursor.fetchall()
     conn.commit()
-    count= cursor.rowcount
-    print(count,"Your Appointment has been created. Returing back to the main menu. ")
+    print("Your Appointment has been created. Returing back to the main menu. ")
 
 def create_order():
     cID = view_prompt("Enter in the ID for the customer: ", "customers", show_patients)
@@ -336,8 +340,6 @@ def do_action(priv, action):
 def main():
     # [userID, password, patient, employee, privilege, LoginTime, LogoutTime]
     login_details = welcome_login()
-    for det in login_details:
-        print (det)
     priv = login_details[2]
     #priv = "scheduler"
     print(f"Welcome, {login_details[0]}! Please select any of the following: ")

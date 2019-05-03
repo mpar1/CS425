@@ -195,7 +195,8 @@ def create_account():
         else:
             print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
 
-    id = input("Please input the ID of the person you wish to connect this account to: ")
+    id_str = input("Please input the ID of the person you wish to connect this account to: ")
+    id = int(id_str)
     log = [user, pw]
     if priv == "patient":
         log.append(id)

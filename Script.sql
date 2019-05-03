@@ -44,7 +44,7 @@ create table orders (
 create table patient (
 	fname varchar(16),
 	lname varchar(16),
-	address varchar(16),
+	address varchar(50),
 	patientID varchar(16),
 	primary key (patientID),
 );

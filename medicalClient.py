@@ -2,6 +2,7 @@ import psycopg2 as db
 import urllib.parse as up
 import os
 import sys
+from datetime import datetime
 
 up.uses_netloc.append("postgres")
 url = up.urlparse("postgres://fcbeygin:nPzIeoASpjJTLArcn4BCdZB_SzchCX78@isilo.db.elephantsql.com:5432/fcbeygin")
@@ -106,7 +107,7 @@ def show_employees(verbose=False): #no grouping between doc and others
         info = f"ID: {row[2]} | Name: {row[0]} {row[1]}"
         if verbose:
             info += f" | Job Type: {row[3]}"
-            
+
         print(info)
     print("\n===============================\n")
 
@@ -124,10 +125,10 @@ def schedule_appoint():
     date= input("Enter in the date(yyyy-mm-dd) of the appointment: " )
     pID = view_prompt("Enter in the ID of the patient: ", "patients", show_patients)
     sID = view_prompt("Enter in the ID of staff meeting the patient: ", "employees", show_employees)
-   
+
     PGsql = """insert into appointments(appointDate, patient, meeting)
                 values(%s, %s, %s);"""
-   
+
     cursor.execute(PGsql, (date, pID, sID))
     cursor.fetchall()
     conn.commit()
@@ -155,7 +156,7 @@ def create_patient():
     while True:
         attrs[0] = input("Enter in the first name of the new patient: ")
         attrs[1] = input("Enter in the last name of the patient: ")
-        if attrs[0].isalpha() and attrs[1].isalpha(): #check valid names 
+        if attrs[0].isalpha() and attrs[1].isalpha(): #check valid names
             break
         else:
             print("Invalid name")
@@ -186,7 +187,7 @@ def create_account():
         elif priv == "medicalStaff" or priv == "scheduler" or priv == "admin":
             show_employees(True)
             break
-        else: 
+        else:
             print("Please input a valid privilege \n (patient, medicalStaff, scheduler, admin)")
 
     id = input("Please input the ID of the person you wish to connect this account to: ")
@@ -201,7 +202,7 @@ def create_account():
 
     command = f"INSERT INTO login VALUES ({log[0]}, {log[1]}, {log[2]}, {log[3]}, {log[4]})"
     cursor.execute(command)
-    conn.commit()	
+    conn.commit()
     print("Login created!")
 
 def quit_program():
@@ -223,7 +224,7 @@ def try_login():
     valid_user = False
 
     while valid_user == False:
-        u_name = input("Username: ")	
+        u_name = input("Username: ")
         if u_name == 'q':
             quit_program()
         for row in logins:
@@ -238,6 +239,15 @@ def try_login():
         p_word = input("Password: ")
         if user_info[1] == p_word:
             print("Login Successful!")
+            t = str(datetime.now().time())
+            t = t[:8]
+            command = f"UPDATE login SET logintime = '{t}' WHERE userid = '{user_info[0]}'"
+            cursor.execute(command)
+            command2 = f"SELECT logintime FROM login WHERE userid='{user_info[0]}'"
+            cursor.execute(command2)
+            logintime = cursor.fetchall()
+            for t2 in logintime:
+                print("Login time recorded:", t2[0])
             return [val for val in user_info] #convert user info to array
         elif p_word == "q": #Doesn't work if password is q
             quit_program()
@@ -269,7 +279,7 @@ def menu(priv):
 
     patientPrompt =  "1. View orders\n" \
                     + "2. Logout\n"
-        
+
     schedulerPrompt =  "1. Schedule an appointment\n" \
                         + "2. Create new patient\n" \
                         + "3. Create new user account\n" \
@@ -278,7 +288,7 @@ def menu(priv):
 
     endcl = "===============================\n" \
             + "Enter in the number for the action: "
-            
+
     action_switch = {
         "admin" : adminPrompt,
         "medicalStaff" : staffPrompt,
@@ -338,5 +348,5 @@ def main():
             priv = login_details[2]
 
 
-        
+
 main()

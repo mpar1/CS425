@@ -149,7 +149,7 @@ def create_order():
     cursor.execute("select max(patientID) from patient")
     oID = int(cursor.fetchone()[0])+1
     pgsql = """insert into orders(orderID, customerID, staffID, diagnosticID, results)
-                values(ord%s, %s, %s, %s, %s)"""
+                values('ord%s', %s, %s, %s, %s)"""
     cursor.execute(pgsql, (oID, cID, stID, dID, res))
     #cursor.fetchall()
     conn.commit()

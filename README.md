@@ -1,6 +1,6 @@
 ## CS425_Project
 Group E project repository 
-
+A medical database with different access running on pyhton and postgresql
 # To-do List:
 1. Git all the github usernames
 2. Create schema based off of word doc
